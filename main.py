@@ -52,12 +52,12 @@ def ffmpeg_stream(stream_url: str, segment_time: int = 300, output_path: str = "
 if __name__ == '__main__':
     if Path("/.dockerenv").exists():
         # Running in docker
-        print("Making download directory if it doesn't exist")
         OUTPUT_DIR = OUTPUT_DIR_DEFAULT
     else:
         OUTPUT_DIR = "/tmp/" + OUTPUT_DIR_DEFAULT
 
-        Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
+    print("Making download at: " + OUTPUT_DIR)
+    Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
 
     while 1:
         print("Starting")
