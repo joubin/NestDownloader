@@ -43,7 +43,7 @@ def ffmpeg_stream(stream_url: str, segment_time: int = 300, output_path: str = "
     # Ensure that url is from a trusted source
     command = "ffmpeg -i " + stream_url + " -c:v libx264  -f segment -segment_time " + str(
         segment_time) + " -g 10 -sc_threshold 0 " \
-                        "-reset_timestamps 1 -strftime 1 /app/download/%Y-%m-%d_%H-%M-%S-Garage.mp4 "
+                        "-reset_timestamps 1 -strftime 1 "+OUTPUT_DIR+"%Y-%m-%d_%H-%M-%S-Garage.mp4 "
     subprocess.call(command, shell=True)
 
 
