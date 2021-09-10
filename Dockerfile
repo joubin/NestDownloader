@@ -7,4 +7,5 @@ COPY main.py /app
 
 RUN pip install -r requirements.txt && chown seluser:seluser /app -R && chmod +x /app/download.sh
 USER seluser
-ENTRYPOINT [ "/app/download.sh" ]
+ENTRYPOINT [ "python3" ]
+CMD [ "/app/main.py" ]
