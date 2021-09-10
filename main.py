@@ -7,7 +7,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-OUTPUT_DIR = "/app/download"
+OUTPUT_DIR_DEFAULT = "/app/download/"
+OUTPUT_DIR = ""
 
 
 def eprint(msg):
@@ -43,23 +44,32 @@ def ffmpeg_stream(stream_url: str, segment_time: int = 300, output_path: str = "
     # Ensure that url is from a trusted source
     command = "ffmpeg -i " + stream_url + " -c:v libx264  -f segment -segment_time " + str(
         segment_time) + " -g 10 -sc_threshold 0 " \
-                        "-reset_timestamps 1 -strftime 1 "+OUTPUT_DIR+"%Y-%m-%d_%H-%M-%S-Garage.mp4"
+                        "-reset_timestamps 1 -strftime 1 " + OUTPUT_DIR + "%Y-%m-%d_%H-%M-%S-Garage.mp4"
     print(command)
     subprocess.call(command, shell=True)
 
 
 if __name__ == '__main__':
-    print("Making download directory if it doesn't exist")
-    Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
+    if Path("/.dockerenv").exists():
+        # Running in docker
+        print("Making download directory if it doesn't exist")
+        OUTPUT_DIR = OUTPUT_DIR_DEFAULT
+    else:
+        OUTPUT_DIR = "/tmp/" + OUTPUT_DIR_DEFAULT
+
+        Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
 
     while 1:
         print("Starting")
         try:
-            print("Getting stream url from the public url")
-            stream_url = get_stream_url(url=os.getenv('NESTDOWNLOADER_PUBLIC_URL'))
+            print("Getting stream url from the NESTDOWNLOADER_PUBLIC_URL")
+            stream_url = get_stream_url(
+                url=os.getenv('NESTDOWNLOADER_PUBLIC_URL'))
             segment_time = os.getenv("NESTDOWNLOADER_SEGMENT_SIZE", 300)
-            formatted_file_name = os.getenv("NESTDOWNLOADER_FILENAME_FORMAT", "%Y-%m-%d_%H-%M-%S-Garage.mp4")
+            formatted_file_name = os.getenv(
+                "NESTDOWNLOADER_FILENAME_FORMAT", "%Y-%m-%d_%H-%M-%S-Garage.mp4")
             print("Running FFMPEG")
             ffmpeg_stream(stream_url=stream_url, segment_time=segment_time)
         except Exception as e:
-            eprint(e)
+            print(e)
+            eprint(str(e))
