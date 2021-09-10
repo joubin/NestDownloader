@@ -1,0 +1,10 @@
+version: "3"
+
+services: 
+  nest_download:
+    build: .
+    container_name: nest_downloader
+    volumes: 
+      - ./download:/download
+    environment: 
+      - "PUBLIC_URL=https://video.nest.com/live/#######"
