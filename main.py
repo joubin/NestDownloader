@@ -5,6 +5,9 @@ from selenium.webdriver.support import expected_conditions as EC
 import os
 import subprocess
 import sys
+from pathlib import Path
+
+OUTPUT_DIR = "/app/download"
 
 
 def eprint(msg):
@@ -38,17 +41,24 @@ def get_stream_url(url: str) -> str:
 def ffmpeg_stream(stream_url: str, segment_time: int = 300, output_path: str = ""):
     # This approach is insecure but easy to read
     # Ensure that url is from a trusted source
-    command = "ffmpeg -i " + stream_url + " -c:v libx264  -f segment -segment_time "+ str(segment_time) +" -g 10 -sc_threshold 0 " \
-                                          "-reset_timestamps 1 -strftime 1 " + output_path + "%Y-%m-%d_%H-%M-%S-Garage.mp4 "
+    command = "ffmpeg -i " + stream_url + " -c:v libx264  -f segment -segment_time " + str(
+        segment_time) + " -g 10 -sc_threshold 0 " \
+                        "-reset_timestamps 1 -strftime 1 /app/download/%Y-%m-%d_%H-%M-%S-Garage.mp4 "
     subprocess.call(command, shell=True)
 
 
-while 1:
-    try:
-        stream_url = get_stream_url(url=os.getenv('NESTDOWNLOADER_PUBLIC_URL'))
-        segment_time = os.getenv("NESTDOWNLOADER_SEGMENT_SIZE", 300)
-        formatted_file_name = os.getenv("NESTDOWNLOADER_FILENAME_FORMAT", "%Y-%m-%d_%H-%M-%S-Garage.mp4")
-        output_path = os.getenv("NESTDOWNLOADER_OUTPUT_PATH", os.getcwd()+"/")
-        ffmpeg_stream(stream_url=stream_url, segment_time=segment_time, output_path=output_path)
-    except Exception as e:
-        eprint(e)
+if __name__ == '__main__':
+    print("Making download directory if it doesn't exist")
+    Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
+
+    while 1:
+        print("Starting")
+        try:
+            print("Getting stream url from the public url")
+            stream_url = get_stream_url(url=os.getenv('NESTDOWNLOADER_PUBLIC_URL'))
+            segment_time = os.getenv("NESTDOWNLOADER_SEGMENT_SIZE", 300)
+            formatted_file_name = os.getenv("NESTDOWNLOADER_FILENAME_FORMAT", "%Y-%m-%d_%H-%M-%S-Garage.mp4")
+            print("Running FFMPEG")
+            ffmpeg_stream(stream_url=stream_url, segment_time=segment_time)
+        except Exception as e:
+            eprint(e)

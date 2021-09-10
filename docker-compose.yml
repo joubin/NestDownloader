@@ -5,9 +5,8 @@ services:
     build: .
     container_name: nest_downloader
     volumes: 
-      - ./download:/download
+      - ./download:/app/download
     environment: 
       - "NESTDOWNLOADER_PUBLIC_URL=https://video.nest.com/live/####" # from the nest share page
       - "NESTDOWNLOADER_SEGMENT_SIZE=300" #default
       - "NESTDOWNLOADER_FILENAME_FORMAT=%Y-%m-%d_%H-%M-%S-Garage.mp4" #default
-      - "NESTDOWNLOADER_OUTPUT_PATH=/download" # make sure this exists and mapped as a volume
