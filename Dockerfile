@@ -8,4 +8,4 @@ COPY main.py /app
 RUN pip install -r requirements.txt && chown seluser:seluser /app -R 
 USER seluser
 ENTRYPOINT [ "python3" ]
-CMD [ "/app/main.py" ]
+CMD [ "-u", "/app/main.py" ]
