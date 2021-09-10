@@ -42,9 +42,12 @@ def get_stream_url(url: str) -> str:
 def ffmpeg_stream(stream_url: str, segment_time: int = 300, output_path: str = ""):
     # This approach is insecure but easy to read
     # Ensure that url is from a trusted source
-    command = "ffmpeg -i " + stream_url + " -c:v libx264  -f segment -segment_time " + str(
-        segment_time) + " -g 10 -sc_threshold 0 " \
-                        "-reset_timestamps 1 -strftime 1 " + OUTPUT_DIR + "%Y-%m-%d_%H-%M-%S-Garage.mp4"
+    # command = "ffmpeg -i " + stream_url + "  -f segment -segment_time " + str(
+    #     segment_time) + " -g 10 -sc_threshold 0 " \
+    #                     "-reset_timestamps 1 -strftime 1 " + OUTPUT_DIR + "%Y-%m-%d_%H-%M-%S-Garage.mp4"
+
+    command = "ffmpeg -i " + stream_url + "  -c copy  -f segment -segment_time 300 -strftime 1 " + \
+        OUTPUT_DIR + "%Y-%m-%d_%H-%M-%S-Garage.mp4"
     print(command)
     subprocess.call(command, shell=True)
 
