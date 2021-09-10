@@ -5,7 +5,7 @@ services:
     build: .
     container_name: nest_downloader
     volumes: 
-      - ./download:/app/download
+      - ./download:/app
     environment: 
       - "NESTDOWNLOADER_PUBLIC_URL=https://video.nest.com/live/####" # from the nest share page
       - "NESTDOWNLOADER_SEGMENT_SIZE=300" #default

@@ -7,9 +7,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-OUTPUT_DIR_DEFAULT = "/app/download/"
-OUTPUT_DIR = ""
-
 
 def eprint(msg):
     sys.stderr.write(msg)
@@ -42,26 +39,17 @@ def get_stream_url(url: str) -> str:
 def ffmpeg_stream(stream_url: str, segment_time: int = 300, output_path: str = ""):
     # This approach is insecure but easy to read
     # Ensure that url is from a trusted source
-    # command = "ffmpeg -i " + stream_url + "  -f segment -segment_time " + str(
-    #     segment_time) + " -g 10 -sc_threshold 0 " \
-    #                     "-reset_timestamps 1 -strftime 1 " + OUTPUT_DIR + "%Y-%m-%d_%H-%M-%S-Garage.mp4"
+    command = "ffmpeg -i " + stream_url + "  -f segment -segment_time " + str(
+        segment_time) + " -g 10 -sc_threshold 0 " \
+                        "-reset_timestamps 1 -strftime 1 %Y-%m-%d_%H-%M-%S-Garage.mp4"
 
-    command = "ffmpeg -i " + stream_url + "  -c copy  -f segment -segment_time 300 -strftime 1 " + \
-        OUTPUT_DIR + "%Y-%m-%d_%H-%M-%S-Garage.mp4"
+    # command = "ffmpeg -i " + stream_url + "  -c copy  -f segment -segment_time 300 -strftime 1 " + \
+    #     OUTPUT_DIR + "%Y-%m-%d_%H-%M-%S-Garage.mp4"
     print(command)
     subprocess.call(command, shell=True)
 
 
 if __name__ == '__main__':
-    if Path("/.dockerenv").exists():
-        # Running in docker
-        OUTPUT_DIR = OUTPUT_DIR_DEFAULT
-    else:
-        OUTPUT_DIR = "/tmp/" + OUTPUT_DIR_DEFAULT
-
-    print("Making download at: " + OUTPUT_DIR)
-    Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
-
     while 1:
         print("Starting")
         try:
