@@ -6,15 +6,23 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+import logging
+from sys import stdout
 
+# Define logger
+logger = logging.getLogger('mylogger')
 
-def eprint(msg):
-    sys.stderr.write(msg)
+logger.setLevel(logging.DEBUG)  # set logger level
+formatter = logging.Formatter("%(asctime)s %(message)s",
+                              "%Y-%m-%d %H:%M:%S")
+consoleHandler = logging.StreamHandler(stdout)  # set streamhandler to stdout
+consoleHandler.setFormatter(formatter)
+logger.addHandler(consoleHandler)
 
 
 def get_stream_url(url: str) -> str:
     if url is None or url == "":
-        eprint("The URL was not set as the environmental var PUBLIC_URL")
+        logger.error("The URL was not set as the environmental var PUBLIC_URL")
         sys.exit(1)
     ff_options = webdriver.FirefoxOptions()
     ff_options.headless = True
@@ -28,7 +36,8 @@ def get_stream_url(url: str) -> str:
 
         video_elements = element.find_elements_by_css_selector("*")
         if len(video_elements) != 1:
-            eprint("The web page must have changed, please review the source code")
+            logger.error(
+                "The web page must have changed, please review the source code")
             sys.exit(1)
         else:
             return video_elements[0].get_attribute('src')
@@ -45,22 +54,22 @@ def ffmpeg_stream(stream_url: str, segment_time: int = 300, output_path: str = "
 
     # command = "ffmpeg -i " + stream_url + "  -c copy  -f segment -segment_time 300 -strftime 1 " + \
     #     OUTPUT_DIR + "%Y-%m-%d_%H-%M-%S-Garage.mp4"
-    print(command)
+    logger.info(command)
     subprocess.call(command, shell=True)
 
 
 if __name__ == '__main__':
     while 1:
-        print("Starting")
+        logger.info("Starting")
         try:
-            print("Getting stream url from the NESTDOWNLOADER_PUBLIC_URL")
+            logger.info(
+                "Getting stream url from the NESTDOWNLOADER_PUBLIC_URL")
             stream_url = get_stream_url(
                 url=os.getenv('NESTDOWNLOADER_PUBLIC_URL'))
             segment_time = os.getenv("NESTDOWNLOADER_SEGMENT_SIZE", 300)
             formatted_file_name = os.getenv(
                 "NESTDOWNLOADER_FILENAME_FORMAT", "%Y-%m-%d_%H-%M-%S-Garage.mp4")
-            print("Running FFMPEG")
+            logger.info("Running FFMPEG")
             ffmpeg_stream(stream_url=stream_url, segment_time=segment_time)
         except Exception as e:
-            print(e)
-            eprint(str(e))
+            logger.error(e)
