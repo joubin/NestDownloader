@@ -39,7 +39,7 @@ def get_stream_url(url: str) -> str:
 def ffmpeg_stream(stream_url: str, segment_time: int = 300, output_path: str = ""):
     # This approach is insecure but easy to read
     # Ensure that url is from a trusted source
-    command = "ffmpeg -i " + stream_url + " -loglevel error -f segment -segment_time " + str(
+    command = "ffmpeg -i " + stream_url + " -map 0:1 -map 0:2 -c copy  -loglevel error -f segment -segment_time " + str(
         segment_time) + " -g 10 -sc_threshold 0 " \
                         "-reset_timestamps 1 -strftime 1 %Y-%m-%d_%H-%M-%S-Garage.mp4"
 
