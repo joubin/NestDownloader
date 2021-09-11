@@ -59,8 +59,8 @@ def ffmpeg_stream(stream_url: str, segment_time: int = 300, output_path: str = "
 
 
 if __name__ == '__main__':
+    logger.info("Starting")
     while 1:
-        logger.info("Starting")
         try:
             logger.info(
                 "Getting stream url from the NESTDOWNLOADER_PUBLIC_URL")
@@ -73,3 +73,4 @@ if __name__ == '__main__':
             ffmpeg_stream(stream_url=stream_url, segment_time=segment_time)
         except Exception as e:
             logger.error(e)
+            logger.info("Will try to restart")
