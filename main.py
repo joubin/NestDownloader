@@ -48,7 +48,7 @@ def get_stream_url(url: str) -> str:
 def ffmpeg_stream(stream_url: str, segment_time: int = 300, output_path: str = ""):
     # This approach is insecure but easy to read
     # Ensure that url is from a trusted source
-    command = "ffmpeg -i " + stream_url + " -vf \"settb=AVTB,setpts='trunc(PTS/1K)*1K+st(1,trunc(RTCTIME/1K))-1K*trunc(ld(1)/1K)',drawtext=fontfile=/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf:text='%{localtime}.%{eif\:1M*t-1K*trunc(t*1K)\:d}':fontcolor=white@1.0:fontsize=(h/30):x=7:y=7 \" -map 0:1 -map 0:2 -loglevel error -f segment -segment_time " + str(
+    command = "ffmpeg -i " + stream_url + " -vf drawtext=fontfile=/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf:text='%{localtime}':fontcolor=white@0.8:x=7:y=7 -map 0:1 -map 0:2 -loglevel error -f segment -segment_time " + str(
         segment_time) + " -g 10 -sc_threshold 0 " \
                         "-reset_timestamps 1 -strftime 1 %Y-%m-%d_%H-%M-%S-Garage.mp4"
 
