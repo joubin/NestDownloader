@@ -114,7 +114,7 @@ def ffmpeg_stream(stream_url: str, segment_time: int = 300, output_path: str = "
                                              ":text='%{localtime}':fontcolor=white@0.8:x=7:y=7 -map 0:1 -map 0:2 " \
                                              "-loglevel error -f segment -segment_time " + str(
         segment_time) + " -g 10 -sc_threshold 0 " \
-                        "-reset_timestamps 1 -strftime 1 %Y%m%d%H%M%S-Garage.mp4"
+                        "-reset_timestamps 1 -c:v mpeg4 -strftime 1 %Y%m%d%H%M%S-Garage.mp4"
 
     logger.info(command)
     return subprocess.call(command, shell=True)
