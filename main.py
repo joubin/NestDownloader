@@ -46,7 +46,7 @@ def creation_date(path_to_file) -> datetime:
     return date
 
 
-def create_date_chunks(files: List) -> dict[str, list]:
+def create_date_chunks(files: List):
     results = {}
     for file in files:
         cd = creation_date(file)
