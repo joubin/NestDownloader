@@ -136,10 +136,10 @@ def download():
             logger.info("Will try to restart")
 
 
-def maintenance():
+def maintenance(working_dir: str):
     # List all of the files
     logger.info("Starting Maint")
-    files = get_file_paths("./testData")
+    files = get_file_paths(working_dir)
     days_ago = datetime.combine(datetime.now(), datetime.min.time()) - timedelta(
         days=os.getenv("NESTDOWNLOADER_ARCHIVE_DAYS", 10))
     # chunk into days
@@ -170,7 +170,7 @@ def maintenance():
 
 if __name__ == '__main__':
     thread1 = Thread(target=download)
-    thread2 = Thread(target=maintenance())
+    thread2 = Thread(target=maintenance, args=(os.getenv("NESTDOWNLOADER_WORKING_DIR", "./")))
     thread1.start()
     thread2.start()
     thread1.join()
