@@ -170,7 +170,7 @@ def maintenance(working_dir: str):
 
 if __name__ == '__main__':
     thread1 = Thread(target=download)
-    thread2 = Thread(target=maintenance, args=(os.getenv("NESTDOWNLOADER_WORKING_DIR", "./"),))
+    thread2 = Thread(target=maintenance, args=("/app",))
     thread1.start()
     thread2.start()
     thread1.join()
